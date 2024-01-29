@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+/* Standardize Pages */
+:root {
+    --main-color: #aa3c2c;
+    --main-color-opacity: rgba(170, 61, 44, 0.2);
+    --main-color-opacity-dark: rgba(170, 61, 44, 0.5);
+    --black: #333333;
+    --white: #ffffff;
+    --light-black: #5c5c5c;
+    --light-white: #c2c2c2;
+    --green: #00b300;
+    --red: #ff0000;
+    --dark-bg: rgba(0, 0, 0, 0.7);
+    --light-bg: #eeeeee;
+    --border: 1rem solid var(--black);
+    --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    --text-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+    --hover-admin-option: rgba(211, 15, 15, 0.233)
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+html::-webkit-scrollbar {
+    width: 1rem;
+}
+
+html::-webkit-scrollbar-track {
+    background-color: var(--white);
+}
+
+html::-webkit-scrollbar-thumb {
+    background-color: var(--main-color);
+}
+
+section {
+    padding: 5rem 10%;
+}
+
+main {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.headerBar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--black);
+    display: flex;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerBar .navbar a {
+    font-size: 2rem;
+    margin-left: 2rem;
+    color: var(--white);
+}
+
+.headerBar .navbar a:hover {
+    color: var(--main-color);
+}
+
+#menu-bars {
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: var(--white);
+    display: none;
+}
+
+.text-danger{
+    color: var(--red);
+    font-size: 1.5rem;
+}
+
+
+
+@media (max-width: 75em) {
+
+    header section {
+        padding: 3rem 5%;
+    }
+
+}
+
+@media (max-width: 61.875em) {
+
+    html {
+        font-size: 55%;
+    }
+
+    header section {
+        padding: 3rem 2rem;
+    }
+}
+
+@media (max-width: 46.875em) {
+
+    #menu-bars {
+        display: inline-block;
+        transition: 0.2s linear;
+    }
+
+    #menu-bars.fa-times {
+        transform: rotate(180deg);
+    }
+
+    .headerBar .navbar {
+        position: absolute;
+        top: 99%;
+        left: 0;
+        right: 0;
+        background-color: var(--white);
+        transition: 0.2s linear;
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    }
+
+    .headerBar .navbar.active {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .headerBar .navbar a {
+        display: block;
+        margin: 0rem;
+        padding: 1rem;
+        text-align: center;
+        font-size: 2rem;
+        color: var(--black);
+        border-bottom: 1.5px solid var(--black);
+    }
+
+
+}
+
+
+@media (max-width: 28.125em) {
+
+    html {
+        font-size: 50%;
+    }
+
+}

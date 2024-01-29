@@ -1,0 +1,169 @@
+.notification {
+    position: sticky;
+    top: 0;
+    bottom: 3em;
+    z-index: 1001;
+
+    margin-left: auto;
+    margin-right: 3em;
+
+    padding: 1em;
+    background-color: rgb(51, 51, 51);
+    color: white;
+    font-size: 2em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 1em black;
+    animation: fade 8s linear forwards;
+}
+
+@media(max-width: 32em) {
+    .notification {
+        margin-left: 5%;
+        margin-right: 5%;
+        width: 90%;
+    }
+}
+
+@media(min-width: 32em) {
+    .notification {
+        width: 25em;
+    }
+}
+
+.notification a {
+    color: white;
+    text-decoration: underline;
+}
+
+@keyframes fade {
+
+    0%,
+    100% {
+        opacity: 0
+    }
+
+    20%,
+    80% {
+        opacity: 1
+    }
+}
+
+.number-notifications {
+    color: white;
+    padding: 0.1em 0.5em;
+    border-radius: 50%;
+    background-color: var(--main-color);
+
+    font-size: 0.6em;
+    vertical-align: text-top;
+}
+
+.notificationTitle{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.notificationTitle h1{
+    font-size: 5rem;
+    color: var(--black);
+}
+
+.notification-list p{
+    font-size: 2rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+}
+
+.notification-list ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-empty{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.notification-empty h2{
+    font-size: 3.5rem;
+    color: var(--black);
+    margin-bottom: 5rem;
+}
+
+.notification-empty i{
+    font-size: 15rem;
+    color: var(--main-color);
+    margin-bottom: 5rem;
+    margin-top: 3rem;
+}
+
+.notification-top{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+    padding-bottom: 1rem;
+}
+
+.notification-top h2{
+    font-size: 2.5rem;
+    color: var(--black);
+}
+
+.notification-top h2 i{
+    color: var(--main-color);
+    margin-right: 1rem;
+}
+
+.notification-top span{
+    background-color: var(--main-color);
+    color: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    margin-left: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.notification-item-list form{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+    padding-left: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.notification-item-list form button{
+    background-color: var(--main-color);
+    color: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 1em;
+    margin-left: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+}
+
+.notification-item-list form button:hover{
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.notification-clickable{
+    cursor: pointer;
+}
+
+.notification-clickable p{
+    font-size: 2rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}

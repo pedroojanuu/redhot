@@ -1,0 +1,1896 @@
+openapi: 3.0.0
+
+info:
+ version: '1.0'
+ title: 'LBAW RedHot Web API'
+ description: 'Especificação dos Recursos Web (A7) para RedHot'
+
+servers:
+- url: http://lbaw2352.fe.up.pt
+- description: Servidor de Produção
+
+externalDocs:
+ description: Visite a nossa wiki
+ url: https://git.fe.up.pt/lbaw/lbaw2324/lbaw2352/-/wikis/home
+
+tags:
+ - name: 'M01: Autenticação e Perfil'
+ - name: 'M02: Produtos e Catálogo'
+ - name: 'M03: Compras e Carrinho'
+ - name: 'M04: Comentários e Avaliações'
+ - name: 'M05: Páginas de Administrador'
+ - name: 'M06: Páginas estáticas'
+
+paths:
+  /login:
+    get:
+      operationId: R101
+      summary: 'R101: Formulário de Login'
+      description: 'Fornecer um formulário de login. Acesso: PUB'
+      tags:
+        - 'M01: Autenticação e Perfil'
+      responses:
+        '200':
+          description: 'Ok. Mostrar a interface de login'
+    post:
+      operationId: R102
+      summary: 'R102: Ação de Login'
+      description: 'Processa a submissão do formulário de login. Acesso: PUB'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:         
+                  type: string
+                password:   
+                  type: string
+              required:
+                - email
+                - password
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar as credenciais de login.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Autenticado com sucesso. Redireciona, o utilizador para o seu perfil.'
+                  value: '/users/{id}'
+                302Error:
+                  description: 'Autenticação falhada. Redireciona, para o formulário de login.'
+                  value: '/login'
+
+  /logout:
+    post:
+      operationId: R103
+      summary: 'R103: Ação de Logout'
+      description: 'Remove a sessão do utilizador atual. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o logout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Logout com sucesso. Redireciona, para o formulário de login.'
+                  value: '/login'
+
+  /register:
+    get:
+      operationId: R104
+      summary: 'R104: Formulário de Registo'
+      description: 'Fornece ao novo utilizador um formulário de registo. Acesso: PUB'
+      tags:
+        - 'M01: Autenticação e Perfil'
+      responses:
+        '200':
+          description: 'Ok. Mostra a interface do Sign-Up'
+
+    post:
+      operationId: R105
+      summary: 'R105: Ação de Registo'
+      description: 'Processa a submissão do formulário de registo. Acesso: PUB'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:   
+                  type: string
+              required:
+                - name
+                - email
+                - password
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar a informação do novo utilizador'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Resgistado com sucesso. Redireciona, o utilizador para o seu perfil.'
+                  value: '/users/{id}'
+                302Failure:
+                  description: 'Resgisto falhado. Redireciona, para o formulário de registo.'
+                  value: '/register'
+
+
+  /users/{id}/API:
+    get:
+      operationId: R106
+      summary: 'R106: Ver o meu perfil individual'
+      description: 'Mostrar o meu perfil individual de utilizador. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Objeto JSON com os dados do utilizador'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  email:
+                    type: string
+                example:
+                  id: 1012
+                  name: 'Fernando Mendes'
+                  email: 'fernadomendes@gmail.com'
+
+  /users/{id}:
+    get:
+      operationId: R107
+      summary: 'R107: Ver o meu perfil individual'
+      description: 'Mostrar o meu perfil individual de utilizador. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Mostra a página de perfil de utilizador'
+
+
+  /users/{id}/edit:
+    get:
+      operationId: R108
+      summary: 'R108: Formulário para editar o meu perfil individual'
+      description: 'Editar o meu perfil individual. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Ok. Mostrar a interface de Edição do Perfil de Utilizador'
+
+    post:
+      operationId: R109
+      summary: 'R109: Ação de Editar o Perfil'
+      description: 'Processa a submissão do formulário de edição de perfil. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+        
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                newName:
+                  type: string
+                newEmail:
+                  type: string
+              required:
+                - password
+                - newName
+                - newEmail
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar a informação do novo utilizador'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Perfil alterado com sucesso. Redireciona, o utilizador para o seu perfil.'
+                  value: '/users/{id}'
+                302Failure:
+                  description: 'Alteração de Perfil falhada. Redireciona, o utilizador para o seu perfil.'
+                  value: '/users/{id}'
+ 
+  /users/{id}/delete_account:
+    get:
+      operationId: R110
+      summary: 'R110: Eliminar a minha conta'
+      description: 'Eliminar a minha conta. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Ok. Mostrar a interface de Eliminação da Conta'
+
+    post:
+      operationId: R111
+      summary: 'R111: Ação de Eliminar a Conta'
+      description: 'Processa a submissão do formulário de eliminar conta. Acesso: USR, ADM'
+      tags:
+        - 'M01: Autenticação e Perfil'
+        
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                password:
+                  type: string
+              required:
+                - userId
+                - password
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Conta eliminada com sucesso. Redireciona, o utilizador para a Página Inicial.'
+                  value: '/'
+                302Failure:
+                  description: 'Eliminação da Conta falhada. Redireciona, o utilizador para o seu perfil.'
+                  value: '/users/{id}'
+
+  /products/{id}/API:
+    get:
+      operationId: R201
+      summary: 'R201: Visualizar os detalhes do produto'
+      description: 'Mudar para a pagina de informação mais detalhada do produto.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Vai buscar e retorna um JSON com a informação e imagens do produto.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  price:
+                    type: number
+                  discount:
+                    type: number
+                  stock:
+                    type: integer
+                  ratting:
+                    type: number
+                  images:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        url:
+                          type: string
+                example:
+                  id: 17
+                  name: 'Piri-Piri'
+                  description: 'Molho de Piri-Piri'
+                  price: 2.99
+                  discount: 0.0
+                  stock: 10
+                  images:
+                    - id: 1
+                      url: 'https://i.imgur.com/2s0jY9H.jpg'
+                    - id: 2
+                      url: 'https://i.imgur.com/2s0jY9H.jpg'
+
+  /products/{id}:
+    get:
+      operationId: R202
+      summary: 'R202: Visualizar os detalhes do produto'
+      description: 'Retorna a pagina de informação mais detalhada do produto.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Mostrar a página de detalhes do produto.'
+
+  /products/API:
+    get:
+      operationId: R203
+      summary: 'R203: Visualizar todos os produtos'
+      description: 'Retorna um JSON com todos os produtos.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      responses:
+        '200':
+          description: 'Vai buscar e retorna um JSON com todos os produtos.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                        stock:
+                          type: integer
+                        ratting:
+                          type: number
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              url:
+                                type: string
+                example:
+                  products:
+                    - id: 17
+                      name: 'Piri-Piri'
+                      description: 'Molho de Piri-Piri'
+                      price: 2.99
+                      discount: 0.0
+                      stock: 10
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                    - id: 18
+                      name: 'Piri-Piri com Cannabis'
+                      description: 'Molho de Piri-Piri com Cannabis'
+                      price: 3.99
+                      discount: 0.0
+                      stock: 9
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+
+  /products:
+    get:
+      operationId: R204
+      summary: 'R204: Visualizar todos os produtos'
+      description: 'Retorna a pagina com todos os produtos.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      responses:
+        '200':
+          description: 'Mostrar a página com todos os produtos.'
+  
+  /products/search/{stringToSearch}/API:
+    get:
+      operationId: R205
+      summary: 'R205: Visualizar todos os produtos que contenham a string da pesquisa'
+      description: 'Retorna um JSON com todos os produtos que contenham a string da pesquisa.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: stringToSearch
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Vai buscar e retorna um JSON com todos os produtos que contenham a string da pesquisa.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                        stock:
+                          type: integer
+                        ratting:
+                          type: number
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              url:
+                                type: string
+                example:
+                  products:
+                    - id: 17
+                      name: 'Piri-Piri'
+                      description: 'Molho de Piri-Piri'
+                      price: 2.99
+                      discount: 0.0
+                      stock: 10
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                    - id: 18
+                      name: 'Piri-Piri com Cannabis'
+                      description: 'Molho de Piri-Piri com Cannabis'
+                      price: 3.99
+                      discount: 0.0
+                      stock: 9
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+
+  /products/search/{stringToSearch}:
+    get:
+      operationId: R206
+      summary: 'R206: Visualizar todos os produtos que contenham a string da pesquisa'
+      description: 'Retorna a pagina com todos os produtos que contenham a string da pesquisa.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: stringToSearch
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Mostrar a página com todos os produtos que contenham a string da pesquisa.'
+
+  /products/filter/{filter}/API:
+    get:
+      operationId: R207
+      summary: 'R207: Visualizar todos os produtos que contenham o filtro'
+      description: 'Retorna um JSON com todos os produtos que contenham o filtro.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: filter
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Vai buscar e retorna um JSON com todos os produtos que contenham o filtro.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                        stock:
+                          type: integer
+                        ratting:
+                          type: number
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              url:
+                                type: string
+                example:
+                  products:
+                    - id: 17
+                      name: 'Piri-Piri'
+                      description: 'Molho de Piri-Piri'
+                      price: 2.99
+                      discount: 0.0
+                      stock: 10
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                    - id: 18
+                      name: 'Piri-Piri com Cannabis'
+                      description: 'Molho de Piri-Piri com Cannabis'
+                      price: 3.99
+                      discount: 0.0
+                      stock: 9
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+
+  /products/filter/{filter}:
+    get:
+      operationId: R208
+      summary: 'R208: Visualizar todos os produtos que contenham o filtro'
+      description: 'Retorna a pagina com todos os produtos que contenham o filtro.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: filter
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Mostrar a página com todos os produtos que contenham o filtro.'
+
+  /products/search/{stringToSearch}/filter/{filter}/API:
+    get:
+      operationId: R209
+      summary: 'R209: Visualizar todos os produtos resultantes da pesquisa e que contenham o filtro'
+      description: 'Retorna um JSON com todos os produtos resultantes da pesquisa e que contenham o filtro.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: stringToSearch
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: filter
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Vai buscar e retorna um JSON com todos os produtos resultantes da pesquisa e que contenham o filtro.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                        stock:
+                          type: integer
+                        ratting:
+                          type: number
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              url:
+                                type: string
+                example:
+                  products:
+                    - id: 17
+                      name: 'Piri-Piri'
+                      description: 'Molho de Piri-Piri'
+                      price: 2.99
+                      discount: 0.0
+                      stock: 10
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                    - id: 18
+                      name: 'Piri-Piri com Cannabis'
+                      description: 'Molho de Piri-Piri com Cannabis'
+                      price: 3.99
+                      discount: 0.0
+                      stock: 9
+                      images:
+                        - id: 1
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+                        - id: 2
+                          url: 'https://i.imgur.com/2s0jY9H.jpg'
+
+  /products/search/{stringToSearch}/filter/{filter}:
+    get:
+      operationId: R210
+      summary: 'R210: Visualizar todos os produtos resultantes da pesquisa e que contenham o filtro'
+      description: 'Retorna um JSON com todos os produtos resultantes da pesquisa e que contenham o filtro.'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: stringToSearch
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: filter
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Mostrar a página com todos os produtos resultantes da pesquisa e que contenham o filtro.'
+
+  /products/add:
+    get:
+      operationId: R211
+      summary: 'R211: Página de adição de produto ao catálogo'
+      description: 'Fornece a interface de preenchimento de detalhes de produto a adicionar ao catálogo. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de adição de novo produto ao catálogo.'
+    
+    post:
+      operationId: R212
+      summary: 'R212: Ação de adição de novo produto ao catálogo'
+      description: 'Processa um pedido de adição de um produto ao catálogo de produtos disponíveis. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                price:
+                  type: number
+                discount:
+                  type: number
+                stock:
+                  type: integer
+              required:
+                - description
+                - price
+                - discount
+                - stock
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de adição de produto.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Produto adicionado com sucesso.'
+                  value: '/products'
+                302Failure:
+                  description: 'Falha ao adicionar produto.'
+                  value: '/products'
+  
+  /products/{id}/edit:
+    get:
+      operationId: R213
+      summary: 'R213: Página de edição de produto ao catálogo'
+      description: 'Fornece a interface de preenchimento de detalhes para editar um produto. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de adição de novo produto ao catálogo.'
+    
+    post:
+      operationId: R214
+      summary: 'R214: Ação de edição de determinado produto ao catálogo'
+      description: 'Processa um pedido de edição de um determinado produto ao catálogo de produtos disponíveis. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                price:
+                  type: number
+                discount:
+                  type: number
+                stock:
+                  type: integer
+              required:
+                - description
+                - price
+                - discount
+                - stock
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de edição de produto.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Produto editado com sucesso.'
+                  value: '/products'
+                302Failure:
+                  description: 'Falha ao editar produto.'
+                  value: '/products'
+
+  /products/{id}/change_stock:
+    get:
+      operationId: R215
+      summary: 'R215: Página de alteração de stock de produto'
+      description: 'Fornece a interface de definição do stock de um produto para um novo valor. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de alteração de stock de um produto.'
+    
+    post:
+      operationId: R216
+      summary: 'R216: Ação de alteração de stock de produto'
+      description: 'Processa um pedido de alteração do stock de um produto do catálogo. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                newStock:
+                  type: integer
+              required:
+                - newStock
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de alteração de stock.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Stock alterado com sucesso.'
+                  value: '/products/{id}'
+                302Failure:
+                  description: 'Falha ao alterar stock.'
+                  value: '/products/{id}'
+  
+  /products/{id}/delete:
+    post:
+      operationId: R217
+      summary: 'R217: Ação de eliminação de produto'
+      description: 'Processa um pedido de remoção de um produto do catálogo. Acesso: ADM'
+      tags:
+        - 'M02: Produtos e Catálogo'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de eliminação.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Produto eliminado com sucesso.'
+                  value: '/products'
+                302Failure:
+                  description: 'Falha ao eliminar produto.'
+                  value: '/products/{id}'
+
+  /products/{id}/add_to_cart:
+    post:
+      operationId: R301
+      summary: 'R301: Ação de adição de um produto ao carrinho da sessão atual'
+      description: 'Ação de adição uma dada quantidade de um produto pelo seu id ao carrinho associado ao utilizador com sessão iniciada. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+              required:
+                - quantity
+      
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de adição.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Produto adicionado ao carrinho com sucesso.'
+                  value: '/products'
+                302Failure:
+                  description: 'Falha ao adicionar produto.'
+                  value: '/faqs'
+  
+  /cart/API:
+    get:
+      operationId: R302
+      summary: 'R302: Revisão do carrinho de compras'
+      description: 'Apresenta um sumário dos produtos existentes no carrinho de compras associado à sessão iniciada. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      responses:
+        '200':
+          description: 'Objeto JSON com as diferentes avaliaçoes feitas ao produto'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: array
+                    description: 'Avaliações feitas ao produto'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                example:
+                  reviews:
+                    - id: 1112
+                      name: 'Sriracha'
+                      discount: 0.1
+                    - id: 4545
+                      name: 'Molho Mexicano Extra Picante'
+                      discount: 0
+
+  /cart:
+    get:
+      operationId: R303
+      summary: 'R303: Revisão do carrinho de compras'
+      description: 'Apresenta um sumário dos produtos existentes no carrinho de compras associado à sessão iniciada. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de revisão do carrinho.'
+  
+  /cart/remove_product:
+    post:
+      operationId: R304
+      summary: 'R304: Ação de remoção de produto do carrinho'
+      description: 'Remove produto adicionado ao carrinho de compras associado à sessão iniciada. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                productID:
+                  type: integer
+              required:
+                - productId
+      
+      responses:
+        '302':
+          description: 'Redireciona de volta para a página de revisão do carrinho, depois de processar o pedido'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Eliminado com sucesso. Redireciona para o carrinho.'
+                  value: '/users/{id}'
+                302Failure:
+                  description: 'Falha na eliminação. Redireciona para o carrinho.'
+                  value: '/register'
+
+  /cart/checkout:
+    get:
+      operationId: R305
+      summary: 'R305: Formulário de checkout do carrinho atual'
+      description: 'Apresenta o formulário a preencher para proceder ao checkout do carrinho associado à sessão iniciada. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de preenchimento de informação necessária para proceder ao checkout de um carrinho de compras.'
+    
+    post:
+      operationId: R306
+      summary: 'R306: Ação de Checkout'
+      description: 'Processa o checkout do carrinho de compras associado à sessão iniciada com base nos parâmetros fornecidos. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cardNo:
+                  type: integer
+                cardHolder:
+                  type: string
+                cardExpiryMonth:
+                  type: integer
+                cardExpiryYear:
+                  type: integer
+                cardCVV:
+                  type: integer
+                street:
+                  type: string
+                doorNo:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+                deliveryObs:
+                  type: string
+              required:
+                - cardNo
+                - cardHolder
+                - cardExpiryMonth
+                - cardExpiryYear
+                - cardCVV
+                - street
+                - doorNo
+                - city
+                - country
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de checkout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Checkout efetuado com successo.'
+                  value: '/index'
+                302Failure:
+                  description: 'Falha no checkout.'
+                  value: '/cart'
+  
+  /users/{id}/orders:
+    get:
+      operationId: R307
+      summary: 'R307: Encomendas de utilizador'
+      description: 'Lista de encomendas do utilizador. Acesso: USR/ADM'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página com a lista de encomendas do utilizador.'
+
+  /users/{userId}/orders/{orderId}/API:
+    get:
+      operationId: R308
+      summary: 'R308: Estado e Detalhes da Encomenda'
+      description: 'Seguimento do estado de uma encomenda. Acesso: USR/ADM'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'Objeto JSON com as diferentes avaliaçoes feitas ao produto'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      status:
+                        type: string
+                example:
+                  id: 5656
+                  status: 'Entrege'
+
+  /users/{userId}/orders/{orderId}:
+    get:
+      operationId: R309
+      summary: 'R309: Estado e Detalhes da Encomenda'
+      description: 'Seguimento do estado de uma encomenda. Acesso: USR/ADM'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página com os detalhes da encomenda pretendida.'
+
+  /users/{userId}/orders/{orderId}/cancel:
+    post:
+      operationId: R310
+      summary: 'R310: Ação de Cancelamento de Encomenda'
+      description: 'Cancelamento de uma Encomenda. Acesso: USR'
+      tags:
+        - 'M03: Compras e Carrinho'
+      
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '302':
+          description: 'Redireciona, depois de processar o pedido de cancelamento.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Encomenda cancelada com sucesso.'
+                  value: '/index'
+                302Failure:
+                  description: 'Falha no cancelamento da encomenda.'
+                  value: '/cart'
+
+  /products/{id}/reviews/API:
+    get:
+      operationId: R401
+      summary: 'R401: Ver as avaliações feitas a um produto'
+      description: 'Mostrar as avaliações feitas a um produto. Acesso: PUB'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        '200':
+          description: 'Objeto JSON com as diferentes avaliaçoes feitas ao produto'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: array
+                    description: 'Avaliações feitas ao produto'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        rating:
+                          type: number
+                        comment:
+                          type: string
+                        date:
+                          type: string
+                        user:
+                          type: object
+                          description: 'Utilizador que fez a avaliação'
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            email:
+                              type: string
+                example:
+                  reviews:
+                    - id: 68
+                      rating: 2.5
+                      comment: 'Muito bom'
+                      date: '2020-12-12'
+                      user:
+                        id: 1012
+                        name: 'Fernando Mendes'
+                        email: 'fernadomendes@gmail.com'
+                    - id: 224
+                      rating: 5
+                      comment: 'Bom'
+                      date: '2020-12-12'
+                      user:
+                        id: 167
+                        name: 'Maria'
+                        email: 'mariaxd@gmail.com'
+
+  /products/{id}/reviews:
+    get:
+      operationId: R402
+      summary: 'R402: Ver as avaliações feitas a um produto'
+      description: 'Mostrar as avaliações feitas a um produto. Acesso: PUB'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar página de avaliações ao produto.'
+
+  /products/{id}/reviews/add_review:
+    get:
+      operationId: R403
+      summary: 'R403: Página de adição de uma avaliação a um produto'
+      description: 'Fornece a interface de preenchimento de uma avaliação a um produto. Acesso: USR'
+      tags:
+        - 'M04: Comentários e Avaliações'
+        
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de adição de uma avaliação a um produto.'
+
+    post:
+      operationId: R404
+      summary: 'R404: Ação de adição uma avaliação a um produto'
+      description: 'Ação de adição uma avaliação a um produto. Acesso: USR'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+
+        - in: query
+          name: rating
+          schema:
+            type: number
+          required: true
+
+        - in: query
+          name: comment
+          schema:
+            type: string
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: number
+                comment:
+                  type: string
+              required:
+                - rating
+                - comment
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de adicionar a avaliação, para a página do produto'
+          headers:
+            Location:
+              schema:
+                type: string       
+              examples:
+                302Success:
+                  description: 'Avaliação adicionada com sucesso'
+                  value: /products/{id}/reviews
+                302Failure:
+                  description: 'Falha ao adicionar avaliação'
+                  value: /products/{id}/reviews
+              
+      
+  /products/{id}/reviews/{id_review}/edit_review:
+    get:
+      operationId: R405
+      summary: 'R405: Página de edição de uma avaliação a um produto'
+      description: 'Fornece a interface de edição de uma avaliação a um produto. Acesso: USR'
+      tags:
+        - 'M04: Comentários e Avaliações'
+        
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          
+        - in: path
+          name: id_review
+          schema:
+            type: integer
+          required: true
+      
+      responses:
+        '200':
+          description: 'OK. Mostrar a página de edição de uma avaliação a um produto.'
+
+    post:
+      operationId: R406
+      summary: 'R406: Ação de edição de avaliação a um produto'
+      description: 'Editar uma avaliação a um produto. Acesso: USR'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: id_review
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+                rating:
+                  type: number
+                comment:
+                  type: string
+              required:
+                - productId
+                - rating
+                - comment
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de editar a avaliação, para a página do produto'
+          headers:
+            Location:
+              schema:
+                type: string       
+              examples:
+                302Success:
+                  description: 'Avaliação editada com sucesso'
+                  value: /products/{id}/reviews/{id_review}
+                302Failure:
+                  description: 'Falha ao editar avaliação'
+                  value: /products/{id}/reviews/{id_review} 
+
+
+  /products/{id}/reviews/{id_review}/delete_review:
+    post:
+      operationId: R407
+      summary: 'R407: Ação de eliminação uma avaliação a um produto'
+      description: 'Apagar uma avaliação a um produto. Acesso: USR, ADM'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: id_review
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+              required:
+                - productId
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de apagar a avaliação, para a página do produto'
+          headers:
+            Location:
+              schema:
+                type: string       
+              examples:
+                302Success:
+                  description: 'Avaliação apagada com sucesso'
+                  value: /products/{id}/reviews
+                302Failure:
+                  description: 'Falha ao apagar avaliação'
+                  value: /products/{id}/reviews/{id_review}                
+
+
+  /products/{id}/reviews/{id_review}/delete_comment:
+    post:
+      operationId: R408
+      summary: 'R408: Ação de eliminação de comentário numa avaliação'
+      description: 'Apagar um comentário ofensivo/inapropriado numa avaliação. Acesso: ADM'
+      tags:
+        - 'M04: Comentários e Avaliações'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: id_review
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+              required:
+                - productId
+
+      responses:
+        '302':
+          description: 'Redireciona, depois de apagar o comentário, para a página do produto'
+          headers:
+            Location:
+              schema:
+                type: string       
+              examples:
+                302Success:
+                  description: 'Comentário apagado com sucesso'
+                  value: /products/{id}/reviews/{id_review}
+                302Failure:
+                  description: 'Falha ao apagar comentário'
+                  value: /products/{id}/reviews/{id_review}
+
+  /admin/API:
+    get:
+      operationId: R501
+      summary: 'R501: Dashboard de Administrador'
+      description: 'Mostrar um dashboard de administrador com estatísticas da atividade do site. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Objeto JSON com todas as estatísticas'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        value:
+                          type: number
+      
+  /admin:
+    get:
+      operationId: R502
+      summary: 'R502: Dashboard de Administrador'
+      description: 'Mostrar um dashboard de administrador com estatísticas da atividade do site. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Mostrar dashboard de administrador com estatísticas da atividade do site (UI10).'
+
+  /adminOrders/API:
+    get:
+      operationId: R503
+      summary: 'R503: Gestão de Encomendas'
+      description: 'Listagem e gestão de encomendas. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Objeto JSON com todas as encomendas'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        value:
+                          type: number
+      
+  /adminOrders:
+    get:
+      operationId: R504
+      summary: 'R504: Gestão de Encomendas'
+      description: 'Listagem e gestão de encomendas. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Mostrar página de gestão de encomendas.'
+  
+  /adminProducts/API:
+    get:
+      operationId: R505
+      summary: 'R505: Gestão de Produtos'
+      description: 'Listagem e gestão de produtos. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Objeto JSON com todas os produtos'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        price:
+                          type: number
+                        discount:
+                          type: number
+                        stock:
+                          type: number
+      
+  /adminProducts:
+    get:
+      operationId: R506
+      summary: 'R506: Gestão de Produtos'
+      description: 'Listagem e gestão de produtos. Acesso: ADM'
+      tags:
+        - 'M05: Páginas de Administrador'
+
+      responses:
+        '200':
+          description: 'Mostrar página de gestão de produtos (UI12).'
+
+  /faqs/API:
+    get:
+      operationId: R601
+      summary: 'R601: Ver todas as FAQs'
+      description: 'Mostrar todas as FAQs. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Objeto JSON com todas as FAQs'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    question:
+                      type: string
+                    answer:
+                      type: string
+              example:
+                - id: 1
+                  question: 'O que é RedHot?'
+                  answer: 'RedHot é um webiste de venda de especiarias e molhos picantes.'
+                - id: 7
+                  question: 'Como posso contactar a RedHot?'
+                  answer: 'Através do nosso endereço de e-mail (redhot@spicy.com) o do nosso contacto telefónico (123456789).'
+
+  /faqs:
+    get:
+      operationId: R602
+      summary: 'R602: Ver todas as FAQs'
+      description: 'Mostrar todas as FAQs. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Mostrar a página de FAQs (UI03).'
+
+  /pps/API:
+    get:
+      operationId: R603
+      summary: 'R603: Ver as Políticas de Privacidade'
+      description: 'Mostrar as Políticas de Privacidade do site. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Objeto JSON com todas as Políticas de Privacidade'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    answer:
+                      type: string
+  
+  /pps:
+    get:
+      operationId: R604
+      summary: 'R604: Ver as Políticas de Privacidade'
+      description: 'Mostrar as Políticas de Privacidade do site. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Mostrar a página de Políticas de Privacidade (UI04).'
+  
+  /tous/API:
+    get:
+      operationId: R605
+      summary: 'R605: Ver os Termos de Utilização'
+      description: 'Mostrar os Termos de Utilização do site. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Objeto JSON com todos Termos de Utilização'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    answer:
+                      type: string
+  
+  /tous:
+    get:
+      operationId: R606
+      summary: 'R606: Ver os Termos de Utilização'
+      description: 'Mostrar os Termos de Utilização do site. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+       
+      responses:
+        '200':
+          description: 'Mostrar a página de Termos de Utilização (UI05).'
+    
+  /welcome:
+    get:
+      operationId: R607
+      summary: 'R607: Ver a Página Inicial'
+      description: 'Mostrar a Página Inicial do site. Acesso: PUB'
+      tags:
+        - 'M06: Páginas estáticas'
+      
+      responses:
+        '200':
+          description: 'Mostrar a Página Inicial (UI01).'
+
